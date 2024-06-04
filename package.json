@@ -1,0 +1,37 @@
+{
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/response-time": "^2.3.8",
+    "eslint": "^9.4.0",
+    "globals": "^15.3.0",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-validator": "^7.1.0",
+    "firebase": "^10.12.2",
+    "firebase-admin": "^12.1.1",
+    "mongoose": "^8.4.1",
+    "multer": "^1.4.5-lts.1",
+    "prom-client": "^15.1.2",
+    "response-time": "^2.3.2",
+    "winston": "^3.13.0",
+    "winston-loki": "^6.1.2"
+  },
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "tsc && node dist/server.js",
+    "start": "tsc && node dist/server.js",
+    "postinstall": "npm install  typescript",
+    "build": "tsc",
+    "dev": "tsc -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

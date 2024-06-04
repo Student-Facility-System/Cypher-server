@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/v1/student/send-password-reset-email
+Content-Type: application/x-www-form-urlencoded
+
+email = rajdwivedipc@gmail.com
+
+###
+GET http://localhost:3001/metrics
+
+
