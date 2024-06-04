@@ -1,13 +1,7 @@
 global:
-  scrape_interval: 2s
+  scrape_interval: 4s
 
 scrape_configs:
-  - job_name: 'prometheus'
+  - job_name: prometheus
     static_configs:
-      - targets: ['localhost:9005']
-  - job_name: 'loki'
-    static_configs:
-      - targets: ['localhost:9006']
-  - job_name: 'express-app'
-    static_configs:
-      - targets: ['express-app:3001']
+      - targets: ["192.168.2.117:3001"]
