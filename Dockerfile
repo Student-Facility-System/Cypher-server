@@ -13,6 +13,8 @@ RUN npm install
 # Copy the rest of the application code to the working directory
 COPY . .
 
+ENV MONGO_URI="mongodb+srv://raj:NwAXvGMLWpVGFIs2@cluster0.v1bry.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
 # Build the TypeScript code
 RUN npm run build
 
