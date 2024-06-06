@@ -26,8 +26,8 @@ scrape_configs:
   - job_name: 'prometheus'
     scrape_interval: 5s
     static_configs:
-      - targets: ['prometheus:9090']  # Use service name
+      - targets: ['192.168.2.163:9090']  # Use service name
 
   - job_name: 'express-backend-server'
     static_configs:
-      - targets: ['express-backend-server:8080']  # Use the service name of your Express server
+      - targets: ['192.168.2.163:8080']  # Use the service name of your Express server

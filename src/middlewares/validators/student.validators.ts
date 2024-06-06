@@ -28,7 +28,7 @@ const initializeStudentValidator = [
         }
     }),
     check('address').isString().withMessage('A valid address is required.'),
-    check('zipcode').isNumeric().withMessage('A valid zipcode is required.'),
+    check('postal_code').isNumeric().withMessage('A valid postal code is required.'),
     check('city').isString().withMessage('A valid city is required.'),
     check('state').isString().withMessage('A valid state is required.'),
     check('country').isString().withMessage('A valid country is required.'),

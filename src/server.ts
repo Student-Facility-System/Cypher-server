@@ -57,6 +57,7 @@ app.get('/metrics', async (req:Request, res:Response) => {
 // Error handling middleware
 function errorHandler(err: Error, req: Request, res: Response, next: NextFunction): void {
     if (!err) return;
+    logger.error(err.message, err);
     console.error(new Date(), err);
 
     if (err instanceof MongooseError) {

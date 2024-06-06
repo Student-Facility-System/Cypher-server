@@ -8,7 +8,7 @@ const student:Schema = new mongoose.Schema(
         aadhaar: {type: mongoose.Types.ObjectId, ref: 'student-aadhaar', required:true},
             profile_image: {type: mongoose.Types.ObjectId, ref:"student-profileImg",  required: true},
         address: {type: String, required: true}, // where the student lives.
-        zipcode: {type: Number, required: true},
+        postal_code: {type: Number, required: true},
         city: {type: String, required: true},
         state: {type: String, required: true},
         country: {type: String, required: true},
