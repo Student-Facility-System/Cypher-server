@@ -2,12 +2,16 @@ import {Request, Response, NextFunction} from 'express';
 import firebase from '../firebase/index.js';
 import {validationResult} from 'express-validator';
 import Student from "../database/schema/Student.js";
+import {MulterError} from "multer";
+import StudentAadhaar from "../database/schema/Student.Aadhaar.js";
+import StudentProfileImg from "../database/schema/Student.ProfileImg.js";
 
 interface studentInitializationRequest {
     uid: string;
     name: string;
     phone: number;
     aadhaar: string;
+    profile_image: string;
     address: string;
     zipcode: number;
     city: string;
@@ -37,6 +41,7 @@ const initializeStudent = async (req: Request, res: Response, next: NextFunction
             , name
             , phone
             , aadhaar
+            , profile_image
             , address
             , zipcode
             , city
@@ -51,6 +56,7 @@ const initializeStudent = async (req: Request, res: Response, next: NextFunction
             name,
             phone,
             aadhaar,
+            profile_image,
             address,
             zipcode,
             city,
@@ -132,9 +138,178 @@ const sendVerificationEmail = async (req: Request, res: Response, next: NextFunc
     }
 };
 
+
+interface saveAadhaarImgRequest {
+    // FILE included.
+    uid: string;
+}
+
+const saveAadhaarImg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(400).send({
+            message: 'Validation failed',
+            errors: errors.array()
+        });
+        return;
+    }
+
+    try {
+
+
+    //     Check for duplicated in DB
+    const {uid} = req.body as saveAadhaarImgRequest;
+    const existingAadhaarImg = await StudentAadhaar.findOne({uid});
+    if (existingAadhaarImg) {
+        res.status(409).send({
+            message: 'Aadhaar image already exists',
+            aadhaar_imageId: existingAadhaarImg._id,
+        });
+        return;
+    }
+
+
+    //     THE user is a valid student. already verified by the validator
+    const file = req.file;
+
+    if (!file) {
+         next(new MulterError('LIMIT_UNEXPECTED_FILE', 'No file uploaded'));
+         return;
+    }
+
+    const newAadhaarImageEntry = new StudentAadhaar({
+        uid,
+        image_data: file.buffer,
+        mimetype: file.mimetype,
+        size: file.size
+    });
+
+    await newAadhaarImageEntry.save();
+    res.status(201).send({
+        message: 'Aadhaar image uploaded successfully',
+        aadhaar_imageId: newAadhaarImageEntry._id
+    });
+
+    return;
+
+
+    } catch (error) {
+        next(error);
+
+    }
+}
+
+
+// NO INTERFACE FOR REQUEST. JUST PARAMS
+const sendAadhaarImg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const {studentFirebaseId} = req.params;
+
+        const aadhaarImg = await StudentAadhaar.findOne({uid: studentFirebaseId});
+
+        if (!aadhaarImg) {
+            next(new Error('Requested Resource found.'));
+        } else {
+            res.setHeader('Content-Type', `${aadhaarImg.mimetype}`); // cast to string.
+            res.send(aadhaarImg.image_data);
+        }
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+interface saveProfileImgRequest {
+    // FILE included.
+    uid: string;
+
+}
+
+const saveProfileImg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(400).send({
+            message: 'Validation failed',
+            errors: errors.array()
+        });
+        return;
+    }
+
+    try {
+
+
+        //     Check for duplicated in DB
+        const {uid} = req.body as saveProfileImgRequest;
+        const existingProfileImg = await StudentProfileImg.findOne({uid});
+        if (existingProfileImg) {
+            res.status(409).send({
+                message: 'Profile image already exists',
+                profile_imageId: existingProfileImg._id,
+            });
+            return;
+        }
+
+
+        //     THE user is a valid student. already verified by the validator
+        const file = req.file;
+
+        console.log("file", file)
+        if (!file) {
+            next(new MulterError('LIMIT_UNEXPECTED_FILE', 'No file uploaded'));
+            return;
+        }
+
+        const newProfileImageEntry = new StudentProfileImg({
+            uid,
+            image_data: file.buffer,
+            mimetype: file.mimetype,
+            size: file.size
+        });
+
+        await newProfileImageEntry.save();
+        res.status(201).send({
+            message: 'Profile image uploaded successfully',
+            profile_imageId: newProfileImageEntry._id
+        });
+
+        return;
+
+
+    } catch (error) {
+        next(error);
+
+    }
+}
+
+
+// NO INTERFACE FOR REQUEST. JUST PARAMS
+const sendProfileImg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const {studentFirebaseId} = req.params;
+
+        const profileImg = await StudentProfileImg.findOne({uid: studentFirebaseId});
+
+        if (!profileImg) {
+            next(new Error('Requested Resource found.'));
+        } else {
+            res.setHeader('Content-Type', `${profileImg.mimetype}`); // cast to string.
+            res.send(profileImg.image_data);
+        }
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 export default {
     sendPasswordResetEmail,
     sendVerificationEmail,
-    initializeStudent
+    initializeStudent,
+    saveAadhaarImg,
+    sendAadhaarImg,
+    saveProfileImg,
+    sendProfileImg,
 };
 
