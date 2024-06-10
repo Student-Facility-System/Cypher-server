@@ -4,10 +4,11 @@ import { MongooseError } from 'mongoose';
 import { FirebaseError } from 'firebase/app';
 import connectDb from "./database/index.js";
 import logger from './lib/logger.js';
-import multer from 'multer';
+
 
 // ROUTES
 import student from "./routes/v1/student/index.js";
+import partner from "./routes/v1/partner/index.js";
 
 // CONSTANTS
 const PORT: number = Number(process.env.PORT) || 8080;
@@ -23,8 +24,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Middleware to handle multipart/form-data
-const upload = multer();
-
 // Logging middleware
 app.use(async(req, res, next) => {
      logger.log('info', `${req.method} ${req.url}`, {
@@ -40,6 +39,7 @@ app.use(async(req, res, next) => {
 
 // Routes
 app.use('/api/v1/student', student);
+app.use('/api/v1/partner', partner);
 
 // Error handling middleware
 function errorHandler(err: Error, req: Request, res: Response, next: NextFunction): void {
@@ -71,6 +71,8 @@ function errorHandler(err: Error, req: Request, res: Response, next: NextFunctio
         message: 'Internal server error',
         errors: [{ name: err.name, message: err.message}],
     });
+
+    next();
 }
 app.use(errorHandler);
 

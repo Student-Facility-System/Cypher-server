@@ -1,28 +1,37 @@
 import {Request, Response, NextFunction} from 'express';
 import firebase from '../firebase/index.js';
 import {validationResult} from 'express-validator';
-import Student from "../database/schema/Student.js";
+import Partner from "../database/schema/Partner.js";
 import {MulterError} from "multer";
-import StudentAadhaar from "../database/schema/Student.Aadhaar.js";
-import StudentProfileImg from "../database/schema/Student.ProfileImg.js";
+import PartnerAadhaar from "../database/schema/Partner.Aadhaar.js";
+import PartnerProfileImg from "../database/schema/Partner.ProfileImg.js";
 import {QueryOptions} from "mongoose";
-interface studentInitializationRequest {
+interface partnerInitializationRequest {
     uid: string;
     name: string;
     phone: number;
+    gender: string;
     aadhaarImage: string;
     profileImage: string;
-    address: string;
-    postalCode: number;
-    city: string;
-    state: string;
-    country: string;
-    gender: string;
+    serviceType: string;
+    // HOME ADDRESS
+    homeAddress: string;
+    homePostalCode: number;
+    homeCity: string;
+    homeState: string;
+    homeCountry: string;
+    // BUSINESS ADDRESS
+    businessAddress: string;
+    businessPostalCode: number;
+    businessCity: string;
+    businessState: string;
+    businessCountry: string;
+
     dob: Date;
 }
 
 
-const initializeStudent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const initializePartner = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     // NOTE: UID is already checked for existence in the request by the validator
 
     const errors = validationResult(req);
@@ -37,31 +46,23 @@ const initializeStudent = async (req: Request, res: Response, next: NextFunction
     try {
 
         const {
-            uid,
-            dob, name, phone, gender, aadhaarImage, profileImage,
-            address, postalCode, city,state, country
+            uid, dob, name, phone, gender, aadhaarImage, profileImage,serviceType,
+            homeAddress, homeCity, homeCountry, homePostalCode, homeState,
+            businessAddress, businessCity, businessCountry, businessPostalCode, businessState,
 
-        } = req.body as studentInitializationRequest;
+        } = req.body as partnerInitializationRequest;
 
-        const newStudent = new Student({
-            uid,
-            dob,
-            name,
-            phone,
-            gender,
-            aadhaarImage,
-            profileImage,
-            address,
-            postalCode,
-            city,
-            state,
-            country
+        const newPartner = new Partner({
+            uid, dob, name, phone, gender, aadhaarImage, profileImage, serviceType,
+            homeAddress, homeCity, homeCountry, homePostalCode, homeState,
+            businessAddress, businessCity, businessCountry, businessPostalCode, businessState,
+
         })
 
-        await newStudent.save();
+        await newPartner.save();
         res.status(201).send({
-            message: 'Student initialized successfully',
-            student: newStudent
+            message: 'Partner initialized successfully',
+            partner: newPartner
         });
     } catch (error) {
         next(error);
@@ -86,14 +87,14 @@ const sendPasswordResetEmail = async (req: Request, res: Response, next: NextFun
         }
 
         const {email} = req.body as sendPasswordResetEmailRequest;
-        const user = await firebase.student.auth.getUserByEmail(email);
+        const user = await firebase.partner.auth.getUserByEmail(email);
 
         if (!user || !user.email) {
             res.status(204).send(); // No content
             return;
         }
 
-        await firebase.student.auth.generatePasswordResetLink(email);
+        await firebase.partner.auth.generatePasswordResetLink(email);
         res.status(204).send();
     } catch (error) {
         next(error);
@@ -116,14 +117,14 @@ const sendVerificationEmail = async (req: Request, res: Response, next: NextFunc
         }
 
         const {email} = req.body as sendVerificationEmailRequest;
-        const user = await firebase.student.auth.getUser(email);
+        const user = await firebase.partner.auth.getUser(email);
 
         console.log(user, email)
         if (!user || !user.email) {
             return next(new Error(`No user associated with provided email ${email}`));
         }
 
-        await firebase.student.auth.generateEmailVerificationLink(email);
+        await firebase.partner.auth.generateEmailVerificationLink(email);
         res.status(200).send({
             message: `Verification email sent to ${email}`
         });
@@ -151,40 +152,40 @@ const saveAadhaarImg = async (req: Request, res: Response, next: NextFunction): 
     try {
 
 
-    //     Check for duplicated in DB
-    const {uid} = req.body as saveAadhaarImgRequest;
-    const existingAadhaarImg = await StudentAadhaar.findOne({uid});
-    if (existingAadhaarImg) {
-        res.status(409).send({
-            message: 'Aadhaar image already exists',
-            aadhaarImageObjectId: existingAadhaarImg._id,
+        //     Check for duplicated in DB
+        const {uid} = req.body as saveAadhaarImgRequest;
+        const existingAadhaarImg = await PartnerAadhaar.findOne({uid});
+        if (existingAadhaarImg) {
+            res.status(409).send({
+                message: 'Aadhaar image already exists',
+                aadhaarImageObjectId: existingAadhaarImg._id,
+            });
+            return;
+        }
+
+
+        //     THE user is a valid Partner. already verified by the validator
+        const file = req.file;
+
+        if (!file) {
+            next(new MulterError('LIMIT_UNEXPECTED_FILE', 'No file uploaded'));
+            return;
+        }
+
+        const newAadhaarImageEntry = new PartnerAadhaar({
+            uid,
+            image_data: file.buffer,
+            mimetype: file.mimetype,
+            size: file.size
         });
+
+        await newAadhaarImageEntry.save();
+        res.status(201).send({
+            message: 'Aadhaar image uploaded successfully',
+            aadhaarImageObjectId: newAadhaarImageEntry._id
+        });
+
         return;
-    }
-
-
-    //     THE user is a valid student. already verified by the validator
-    const file = req.file;
-
-    if (!file) {
-         next(new MulterError('LIMIT_UNEXPECTED_FILE', 'No file uploaded'));
-         return;
-    }
-
-    const newAadhaarImageEntry = new StudentAadhaar({
-        uid,
-        image_data: file.buffer,
-        mimetype: file.mimetype,
-        size: file.size
-    });
-
-    await newAadhaarImageEntry.save();
-    res.status(201).send({
-        message: 'Aadhaar image uploaded successfully',
-        aadhaarImageObjectId: newAadhaarImageEntry._id
-    });
-
-    return;
 
 
     } catch (error) {
@@ -205,7 +206,7 @@ const updateAadhaarImg = async (req: Request, res: Response, next: NextFunction)
 
     try {
         const {uid} = req.body as saveAadhaarImgRequest;
-        const existingAadhaarImg = await StudentAadhaar.findOne({uid});
+        const existingAadhaarImg = await PartnerAadhaar.findOne({uid});
         if (!existingAadhaarImg) {
             res.status(404).send({
                 message: 'Aadhaar image not found. Please use POST Request instead.',
@@ -258,7 +259,7 @@ const saveProfileImg = async (req: Request, res: Response, next: NextFunction): 
 
         //     Check for duplicated in DB
         const {uid} = req.body as saveProfileImgRequest;
-        const existingProfileImg = await StudentProfileImg.findOne({uid});
+        const existingProfileImg = await PartnerProfileImg.findOne({uid});
         if (existingProfileImg) {
             res.status(409).send({
                 message: 'Profile image already exists',
@@ -268,7 +269,7 @@ const saveProfileImg = async (req: Request, res: Response, next: NextFunction): 
         }
 
 
-        //     THE user is a valid student. already verified by the validator
+        //     THE user is a valid Partner. already verified by the validator
         const file = req.file;
 
         console.log("file", file)
@@ -277,7 +278,7 @@ const saveProfileImg = async (req: Request, res: Response, next: NextFunction): 
             return;
         }
 
-        const newProfileImageEntry = new StudentProfileImg({
+        const newProfileImageEntry = new PartnerProfileImg({
             uid,
             image_data: file.buffer,
             mimetype: file.mimetype,
@@ -303,9 +304,9 @@ const saveProfileImg = async (req: Request, res: Response, next: NextFunction): 
 // NO INTERFACE FOR REQUEST. JUST PARAMS
 const sendProfileImg = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const {studentFirebaseId} = req.params;
+        const {partnerFirebaseId} = req.params;
 
-        const profileImg = await StudentProfileImg.findOne({uid: studentFirebaseId});
+        const profileImg = await PartnerProfileImg.findOne({uid: partnerFirebaseId});
 
         if (!profileImg) {
             next(new Error('Requested Resource found.'));
@@ -331,7 +332,7 @@ const updateProfileImg = async (req: Request, res: Response, next: NextFunction)
 
     try {
         const {uid} = req.body as saveProfileImgRequest;
-        const existingProfileImg = await StudentProfileImg.findOne({uid});
+        const existingProfileImg = await PartnerProfileImg.findOne({uid});
         if (!existingProfileImg) {
             res.status(404).send({
                 message: 'Profile image not found. Please use POST Request instead.',
@@ -361,7 +362,8 @@ const updateProfileImg = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
-const enableStudent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+// TODO: enable remove of their service entries as well (for future versions).
+const enablePartner = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         res.status(400).send({
@@ -371,8 +373,8 @@ const enableStudent = async (req: Request, res: Response, next: NextFunction): P
         return;
     }
     try {
-        const {studentFirebaseId} = req.params;
-        await firebase.student.auth.updateUser(studentFirebaseId, {disabled: false})
+        const {partnerFirebaseId} = req.params;
+        await firebase.partner.auth.updateUser(partnerFirebaseId, {disabled: false})
         res.sendStatus(204);
         return
     } catch (err) {
@@ -381,7 +383,7 @@ const enableStudent = async (req: Request, res: Response, next: NextFunction): P
 }
 
 
-const disableStudent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const disablePartner = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         res.status(400).send({
@@ -391,8 +393,8 @@ const disableStudent = async (req: Request, res: Response, next: NextFunction): 
         return;
     }
     try {
-        const {studentFirebaseId} = req.params;
-        await firebase.student.auth.updateUser(studentFirebaseId, {disabled: true})
+        const {partnerFirebaseId} = req.params;
+        await firebase.partner.auth.updateUser(partnerFirebaseId, {disabled: true})
         res.sendStatus(204);
         return
     } catch (err) {
@@ -401,7 +403,7 @@ const disableStudent = async (req: Request, res: Response, next: NextFunction): 
 
 }
 
-const getStudent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const getPartner = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         res.status(400).send({
@@ -411,21 +413,21 @@ const getStudent = async (req: Request, res: Response, next: NextFunction): Prom
         return;
     }
     try {
-        const {studentFirebaseId} = req.params;
+        const {partnerFirebaseId} = req.params;
         const {img} = req.query;
 
         let options:QueryOptions = {maxTimeMS: 10000}
         img === 'true' ? options.populate = 'aadhaarImage profileImage' : null; // max limit of 10 seconds.
 
 
-        const student = await Student.findOne(
-            {uid: studentFirebaseId},
+        const partner = await Partner.findOne(
+            {uid: partnerFirebaseId},
             {},
             options
         );
 
-        res.status(200).send({message: 'Student found.',
-            student
+        res.status(200).send({message: 'Partner found.',
+            partner
         })
 
     } catch (e) {
@@ -437,14 +439,14 @@ const getStudent = async (req: Request, res: Response, next: NextFunction): Prom
 export default {
     sendPasswordResetEmail,
     sendVerificationEmail,
-    initializeStudent,
+    initializePartner,
     saveAadhaarImg,
     saveProfileImg,
     sendProfileImg,
     updateAadhaarImg,
     updateProfileImg,
-    enableStudent,
-    disableStudent,
-    getStudent,
+    enablePartner,
+    disablePartner,
+    getPartner,
 };
 

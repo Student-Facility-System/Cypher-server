@@ -1,6 +1,6 @@
 import admin, {ServiceAccount} from "firebase-admin";
 
-import serviceAccount from "./cypher-07-firebase-adminsdk-wd50f-8a14065888.json" assert { type: "json" };
+import serviceAccount from "./cypher-partners-firebase-adminsdk-key.json" assert { type: "json" };
 
 const adminApp = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount as ServiceAccount)
