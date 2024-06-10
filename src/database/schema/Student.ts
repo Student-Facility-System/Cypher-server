@@ -1,4 +1,4 @@
-import mongoose, {Mongoose, Schema} from "mongoose";
+import mongoose, {Schema} from "mongoose";
 
 const student:Schema = new mongoose.Schema(
     {
@@ -6,8 +6,8 @@ const student:Schema = new mongoose.Schema(
         name : {type: String, required: true},
         phone: {type: Number, required: true, unique: true},
             gender: {type: String, required: true},
-        aadhaarImage: {type: mongoose.Types.ObjectId, ref: 'student-aadhaar', required:true},
-            profileImage: {type: mongoose.Types.ObjectId, ref:"student-profileImg",  required: true},
+        aadhaarImage: {type: mongoose.Types.ObjectId, ref: 'studentAadhaar', required:true},
+            profileImage: {type: mongoose.Types.ObjectId, ref:"studentProfileImage",  required: true},
         address: {type: String, required: true}, // where the student lives.
         postalCode: {type: Number, required: true},
         city: {type: String, required: true},
