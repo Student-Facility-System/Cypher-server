@@ -13,7 +13,7 @@ const room:mongoose.Schema = new mongoose.Schema({
     rent: {type: Number, required: true}, // INR
     rentType: {type: String, required: true, enum:validRentTypes}, // Per month, Per year
     deposit: {type: Number, required: true}, // INR
-    availability: {type: Boolean, default: true}, // defaults to True
+    booked: {type: Boolean, default: false}, // defaults to false
     visible: {type: Boolean, default: false}, // defaults to False
     images: {type: [{
         imageData: {type: Buffer, required: true},
