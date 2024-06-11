@@ -417,7 +417,7 @@ const getPartner = async (req: Request, res: Response, next: NextFunction): Prom
         const {img} = req.query;
 
         let options:QueryOptions = {maxTimeMS: 10000}
-        img === 'true' ? options.populate = 'aadhaarImage profileImage' : null; // max limit of 10 seconds.
+        img === 'true' ? options.populate = 'profileImage' : null; // max limit of 10 seconds. no aadhaar images.
 
 
         const partner = await Partner.findOne(

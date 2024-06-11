@@ -6,6 +6,8 @@ import {MulterError} from "multer";
 import StudentAadhaar from "../database/schema/Student.Aadhaar.js";
 import StudentProfileImg from "../database/schema/Student.ProfileImg.js";
 import {QueryOptions} from "mongoose";
+
+
 interface studentInitializationRequest {
     uid: string;
     name: string;
@@ -44,21 +46,14 @@ const initializeStudent = async (req: Request, res: Response, next: NextFunction
         } = req.body as studentInitializationRequest;
 
         const newStudent = new Student({
-            uid,
-            dob,
-            name,
-            phone,
-            gender,
-            aadhaarImage,
-            profileImage,
-            address,
-            postalCode,
-            city,
-            state,
-            country
+            uid, dob, name, phone, gender, aadhaarImage, profileImage, address, postalCode, city, state, country
         })
 
-        await newStudent.save();
+        const session = await Student.startSession();
+        session.startTransaction();
+        await newStudent.save({session: session});
+        await session.commitTransaction();
+
         res.status(201).send({
             message: 'Student initialized successfully',
             student: newStudent
@@ -153,8 +148,12 @@ const saveAadhaarImg = async (req: Request, res: Response, next: NextFunction): 
 
     //     Check for duplicated in DB
     const {uid} = req.body as saveAadhaarImgRequest;
+
+
     const existingAadhaarImg = await StudentAadhaar.findOne({uid});
     if (existingAadhaarImg) {
+
+
         res.status(409).send({
             message: 'Aadhaar image already exists',
             aadhaarImageObjectId: existingAadhaarImg._id,
@@ -178,7 +177,9 @@ const saveAadhaarImg = async (req: Request, res: Response, next: NextFunction): 
         size: file.size
     });
 
-    await newAadhaarImageEntry.save();
+    await newAadhaarImageEntry.save({});
+
+
     res.status(201).send({
         message: 'Aadhaar image uploaded successfully',
         aadhaarImageObjectId: newAadhaarImageEntry._id
@@ -205,6 +206,10 @@ const updateAadhaarImg = async (req: Request, res: Response, next: NextFunction)
 
     try {
         const {uid} = req.body as saveAadhaarImgRequest;
+
+
+
+
         const existingAadhaarImg = await StudentAadhaar.findOne({uid});
         if (!existingAadhaarImg) {
             res.status(404).send({
@@ -224,7 +229,8 @@ const updateAadhaarImg = async (req: Request, res: Response, next: NextFunction)
         existingAadhaarImg.mimetype = file.mimetype;
         existingAadhaarImg.size = file.size;
 
-        await existingAadhaarImg.save();
+
+        await existingAadhaarImg.save({});
         res.status(200).send({
             message: 'Aadhaar image updated successfully',
             aadhaarImageObjectId: existingAadhaarImg._id
@@ -254,7 +260,6 @@ const saveProfileImg = async (req: Request, res: Response, next: NextFunction): 
     }
 
     try {
-
 
         //     Check for duplicated in DB
         const {uid} = req.body as saveProfileImgRequest;
@@ -415,7 +420,7 @@ const getStudent = async (req: Request, res: Response, next: NextFunction): Prom
         const {img} = req.query;
 
         let options:QueryOptions = {maxTimeMS: 10000}
-        img === 'true' ? options.populate = 'aadhaarImage profileImage' : null; // max limit of 10 seconds.
+        img === 'true' ? options.populate = 'profileImage' : null; // max limit of 10 seconds. no aadhaar images.
 
 
         const student = await Student.findOne(
