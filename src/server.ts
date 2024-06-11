@@ -3,12 +3,13 @@ import cors from 'cors';
 import { MongooseError } from 'mongoose';
 import { FirebaseError } from 'firebase/app';
 import connectDb from "./database/index.js";
-import logger from './lib/logger.js';
+// import logger from './lib/logger.js';
 
 
 // ROUTES
 import student from "./routes/v1/student/index.js";
 import partner from "./routes/v1/partner/index.js";
+import accommodation from "./routes/v1/accommodation/index.js";
 
 // CONSTANTS
 const PORT: number = Number(process.env.PORT) || 8080;
@@ -26,20 +27,22 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware to handle multipart/form-data
 // Logging middleware
 app.use(async(req, res, next) => {
-     logger.log('info', `${req.method} ${req.url}`, {
-        ip: req.ip,
-        userAgent: req.headers['user-agent'],
-        body: req.body,
-        params: req.params,
-        query: req.query,
-    });
-    console.log('logged.')
+    //  logger.log('info', `${req.method} ${req.url}`, {
+    //     ip: req.ip,
+    //     userAgent: req.headers['user-agent'],
+    //     body: req.body,
+    //     params: req.params,
+    //     query: req.query,
+    // });
+    // console.log('logged.')
+    console.log(`${req.method} ${req.url}, ip: ${req.ip}, userAgent: ${req.headers['user-agent']}, body: ${req.body}, params: ${req.params}, query: ${req.query}`)
     next();
 });
 
 // Routes
 app.use('/api/v1/student', student);
 app.use('/api/v1/partner', partner);
+app.use('/api/v1/accommodation', accommodation);
 
 // Error handling middleware
 function errorHandler(err: Error, req: Request, res: Response, next: NextFunction): void {
