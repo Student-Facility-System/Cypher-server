@@ -20,7 +20,7 @@ const room:mongoose.Schema = new mongoose.Schema({
         mimetype: {type: String, required: true},
         size: {type: Number, required: true}
         }], required: true},
-    activeTickets: [{type: mongoose.Types.ObjectId, ref: "AccommodationTicket"}],
+    activeTicket: {type: mongoose.Types.ObjectId, ref: "AccommodationTicket"},
     amenities: {
         ac: {type: Boolean, required:true},
         attachedWashroom: {type: Boolean, required:true},

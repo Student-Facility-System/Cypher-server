@@ -10,8 +10,9 @@ import mongoose from "mongoose";
 const AccommodationTicket:mongoose.Schema = new mongoose.Schema({
     roomId: {type: mongoose.Types.ObjectId, ref: "Room", required: true},
     buildingId: {type: mongoose.Types.ObjectId, ref: "Building", required: true},
-    ownedBy: {type: mongoose.Types.ObjectId, ref: "Student", required: true},
-    status: {type: String, required: false, enum:['active', 'booked', 'expired']},
+    ownedBy: {type: String, ref: "Student", required: true},
+    validTill: {type: Date, required: true, max: Date.now() + 1000*60*60*24*4}, // 4 days
+    status: {type: String, required: false, default:"active", enum:['active', 'booked', 'expired']},
     price: {type: Number, required: false},
     active: {type: Boolean, default: true},
 }, {timestamps: true
