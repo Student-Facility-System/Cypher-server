@@ -2,7 +2,10 @@ import mongoose, {Schema} from "mongoose";
 
 const validServiceTypes = [
     'accommodation',
-    'education'
+    'education',
+    'fooding',
+    'medical',
+    'transportation'
 ]
 
 const partner: Schema = new mongoose.Schema(
