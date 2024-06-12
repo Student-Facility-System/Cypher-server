@@ -14,7 +14,10 @@ const checkValidPartnerUID =
 
 const validServiceTypes:string[] = [
     'accommodation',
-    'education'
+    'education',
+    'fooding',
+    'medical',
+    'transportation'
 ]
 
 const initializePartnerValidator:ValidationChain[] = [
