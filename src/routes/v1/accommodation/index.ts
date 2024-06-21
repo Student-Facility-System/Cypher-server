@@ -2,7 +2,6 @@
 import { Router } from 'express';
 import multer from "../../../lib/multer.js"
 import accommodationController from "../../../controllers/accommodation.controller.js";
-import accommodationValidators from "../../../middlewares/validators/accommodation.validators.js";
 
 const router = Router();
 
@@ -13,7 +12,6 @@ const router = Router();
 router.post(
     '/building',
     multer.upload.single('thumbnail'),
-    accommodationValidators.building.addBuilding,
     accommodationController.building.addBuilding);
 
 /*
@@ -69,14 +67,12 @@ router.get(
 router.post(
     '/building/:buildingId/rooms',
     multer.upload.array('images', 6),
-    accommodationValidators.room.addRoom,
     accommodationController.room.addRoom)
 
 // uses an array to delete. if any invalid roomId is present, then the correct ones are still deleted.
 
 router.delete(
     '/building/:buildingId/rooms',
-    accommodationValidators.room.deleteRoom,
     accommodationController.room.deleteRooms)
 
 
@@ -90,7 +86,6 @@ router.delete('/building/:buildingId/rooms/:roomId', accommodationController.roo
 // hold a room
 router.post(
     '/building/:buildingId/rooms/:roomId/hold',
-    accommodationValidators.room.holdRoom,
     accommodationController.room.holdRoom)
 
 // release a room

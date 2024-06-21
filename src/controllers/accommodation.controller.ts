@@ -19,14 +19,14 @@ interface addBuildingRequest {
     longitude: number;
     type: string;
     // amenities
-    ac: boolean;
-    attachedWashroom: boolean;
-    laundry: boolean;
-    fans: boolean;
-    food: boolean;
-    parking: boolean;
-    waterCooler: boolean;
-    wifi: boolean;
+    ac: string;
+    attachedWashroom: string;
+    laundry: string;
+    fans: string;
+    food: string;
+    parking: string;
+    waterCooler: string;
+    wifi: string;
     firebaseUser: string;
 }
 const addBuilding = async (req:Request, res:Response, next:NextFunction) => {
@@ -142,16 +142,16 @@ interface addRoomRequest {
     rent: number;
     rentType: string;
     deposit: number;
-    visible: boolean;
+    visible?: string;
     // amenities
-    ac: boolean;
-    attachedWashroom: boolean;
-    laundry: boolean;
-    fans: boolean;
-    food: boolean;
-    parking: boolean;
-    waterCooler: boolean;
-    wifi: boolean;
+    ac: string;
+    attachedWashroom: string;
+    laundry: string;
+    fans: string;
+    food: string;
+    parking: string;
+    waterCooler: string;
+    wifi: string;
 
 }
 // has multiple images
