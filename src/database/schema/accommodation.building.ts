@@ -24,14 +24,14 @@ const building:Schema = new mongoose.Schema(
         },
         rooms: [{type: mongoose.Types.ObjectId, ref: "Room"}],
         amenities: {
-            ac: {type: String, required:true},
-            attachedWashroom: {type: String, required:true},
-            laundry: {type: String, required:true},
-            fans: {type: String, required:true},
-            food: {type: String, required:true},
-            parking: {type: String, required:true},
-            waterCooler: {type: String, required:true},
-            wifi: {type: String, required:true},
+            ac: {type: String},
+            attachedWashroom: {type: String},
+            laundry: {type: String},
+            fans: {type: String},
+            food: {type: String},
+            parking: {type: String},
+            waterCooler: {type: String},
+            wifi: {type: String},
         },
     firebaseUser: {type:String, ref: "Partner"}, // firebase UID
     }, {timestamps: true})

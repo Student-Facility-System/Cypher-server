@@ -22,14 +22,14 @@ const room:mongoose.Schema = new mongoose.Schema({
         }], required: true},
     activeTicket: {type: mongoose.Types.ObjectId, ref: "AccommodationTicket"},
     amenities: {
-        ac: {type: String, required:true},
-        attachedWashroom: {type: String, required:true},
-        laundry: {type: String, required:true},
-        fans: {type: String, required:true},
-        food: {type: String, required:true},
-        parking: {type: String, required:true},
-        waterCooler: {type: String, required:true},
-        wifi: {type: String, required:true},
+        ac: {type: String, required:false},
+        attachedWashroom: {type: String},
+        laundry: {type: String, required:false},
+        fans: {type: String, required:false},
+        food: {type: String, required:false},
+        parking: {type: String, required:false},
+        waterCooler: {type: String, required:false},
+        wifi: {type: String, required:false},
     },
 }, {timestamps: true})
 
