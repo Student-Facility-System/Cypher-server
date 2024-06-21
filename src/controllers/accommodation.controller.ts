@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from 'express';
-import {validationResult} from "express-validator";
+
 import AccommodationBuilding from "../database/schema/accommodation.building.js";
 import AccommodationRoom from "../database/schema/accommodation.room.js";
 import AccommodationTicket from "../database/schema/accommodation.ticket.js";
@@ -31,13 +31,8 @@ interface addBuildingRequest {
 }
 const addBuilding = async (req:Request, res:Response, next:NextFunction) => {
     console.log(req.body)
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+
     try {
-
-
         if (!req.file) {
             res.status(400)
                 .json({message: 'Thumbnail is required. No file received.' +
@@ -158,10 +153,7 @@ interface addRoomRequest {
 const addRoom = async (req:Request, res:Response, next:NextFunction) => {
     console.log(req.body)
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+
     try {
         const buildingId = req.params.buildingId;
         console.log(buildingId);
@@ -256,10 +248,6 @@ interface deleteRoomsRequest {
 const deleteRooms = async (req:Request, res:Response, next:NextFunction) => {
     console.log(req.body)
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
     try {
         const buildingId = req.params.buildingId;
         const data:deleteRoomsRequest = req.body;
@@ -284,10 +272,6 @@ const deleteRooms = async (req:Request, res:Response, next:NextFunction) => {
 const deleteRoom = async (req:Request, res:Response, next:NextFunction) => {
     console.log(req.body)
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
-    }
     try {
         const buildingId = req.params.buildingId;
         const roomId = req.params.roomId;
@@ -345,10 +329,6 @@ interface holdRoomRequest {
 const holdRoom = async (req:Request, res:Response, next:NextFunction) => {
     console.log(req.body)
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
-    }
     try {
         const roomId = req.params.roomId;
         const buildingId = req.params.buildingId;
@@ -459,11 +439,6 @@ const releaseRoom = async (req:Request, res:Response, next:NextFunction) => {
 
 const getAllTickets = async (req:Request, res:Response, next:NextFunction) => {
     console.log(req.body)
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
-    }
 
     try {
         const buildingId = req.params.buildingId;
