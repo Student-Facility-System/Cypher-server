@@ -14,7 +14,7 @@ const AccommodationTicket:mongoose.Schema = new mongoose.Schema({
     validTill: {type: Date, required: true, max: Date.now() + 1000*60*60*24*4}, // 4 days
     status: {type: String, required: false, default:"active", enum:['active', 'booked', 'expired']},
     price: {type: Number, required: false},
-    active: {type: Boolean, default: true},
+    active: {type: Boolean, default: false},
 }, {timestamps: true
 })
 
