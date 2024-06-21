@@ -39,7 +39,7 @@ const addBuilding:ValidationChain[] = [
     }),
 
     check(['ac', 'attachedWashroom', 'laundry', 'fans', 'food', 'parking', 'waterCooler', 'wifi']).
-        isBoolean().withMessage('Invalid Value for Amenities. expected Boolean.'),
+    isString().withMessage('Invalid Value for Amenities. expected String.'),
 
     check('firebaseUser').isString().custom(async (value) => {
         const user = await firebase.partner.auth.getUser(value);
@@ -82,11 +82,11 @@ const addRoom:ValidationChain[] = [
     withMessage('Invalid Deposit'),
 
     check('visible').
-    isBoolean().
+    isString().
     withMessage('Invalid Value for Visibility'),
 
     check(['ac', 'attachedWashroom', 'laundry', 'fans', 'food', 'parking', 'waterCooler', 'wifi']).
-    isBoolean().
+    isString().
     withMessage('Invalid Value for Amenities')
 
 ]
@@ -104,7 +104,7 @@ const holdRoom:ValidationChain[] = [
     custom((value) => {if (value < 0) throw new Error('Price must be a positive number')}),
 
     check('active').
-    isBoolean()
+    isString()
 ]
 
 export default {
