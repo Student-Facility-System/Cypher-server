@@ -35,7 +35,7 @@ app.use(async(req, res, next) => {
     //     query: req.query,
     // });
     // console.log('logged.')
-    console.log(req);
+    console.log(req.body, req.params, req.query);
     next();
 });
 
