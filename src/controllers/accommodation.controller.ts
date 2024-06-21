@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from 'express';
-import {validationResult} from "express-validator";
+
 import AccommodationBuilding from "../database/schema/accommodation.building.js";
 import AccommodationRoom from "../database/schema/accommodation.room.js";
 import AccommodationTicket from "../database/schema/accommodation.ticket.js";
