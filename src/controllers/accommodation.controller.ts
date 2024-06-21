@@ -30,6 +30,7 @@ interface addBuildingRequest {
     firebaseUser: string;
 }
 const addBuilding = async (req:Request, res:Response, next:NextFunction) => {
+    console.log(req.body)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -92,6 +93,8 @@ const searchBuildings = async (req:Request, res:Response, next:NextFunction) => 
 
 const getBuildingInfo = async (req:Request, res:Response, next:NextFunction) => {
 //     there are no validation checks here.
+    console.log(req.body)
+
     try {
         const buildingId = req.params.buildingId;
         const buildingData = await AccommodationBuilding.findById(buildingId);
@@ -109,6 +112,8 @@ const getBuildingInfo = async (req:Request, res:Response, next:NextFunction) => 
 
 const deleteBuilding = async (req:Request, res:Response, next:NextFunction) => {
     try {
+        console.log(req.body)
+
         const buildingId = req.params.buildingId;
     //     get all rooms of building
         const allRooms = await AccommodationRoom.find({buildingId: buildingId});
@@ -151,6 +156,8 @@ interface addRoomRequest {
 }
 // has multiple images
 const addRoom = async (req:Request, res:Response, next:NextFunction) => {
+    console.log(req.body)
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -247,6 +254,8 @@ interface deleteRoomsRequest {
 }
 
 const deleteRooms = async (req:Request, res:Response, next:NextFunction) => {
+    console.log(req.body)
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -273,6 +282,8 @@ const deleteRooms = async (req:Request, res:Response, next:NextFunction) => {
 }
 
 const deleteRoom = async (req:Request, res:Response, next:NextFunction) => {
+    console.log(req.body)
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
@@ -303,6 +314,8 @@ const deleteRoom = async (req:Request, res:Response, next:NextFunction) => {
 
 
 const getRoomInfo = async (req:Request, res:Response, next:NextFunction) => {
+    console.log(req.body)
+
     try {
         const roomId = req.params.roomId;
         const roomData = await AccommodationRoom.findById(roomId);
@@ -330,6 +343,8 @@ interface holdRoomRequest {
 }
 
 const holdRoom = async (req:Request, res:Response, next:NextFunction) => {
+    console.log(req.body)
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
@@ -379,6 +394,8 @@ const holdRoom = async (req:Request, res:Response, next:NextFunction) => {
 }
 
 const releaseRoom = async (req:Request, res:Response, next:NextFunction) => {
+    console.log(req.body)
+
     try {
         const roomId = req.params.roomId;
         const roomData = await AccommodationRoom.findOne({_id: roomId});
@@ -441,6 +458,8 @@ const releaseRoom = async (req:Request, res:Response, next:NextFunction) => {
 
 
 const getAllTickets = async (req:Request, res:Response, next:NextFunction) => {
+    console.log(req.body)
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
